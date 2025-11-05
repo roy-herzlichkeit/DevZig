@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
         if (!file) {
             return NextResponse.json({ message: 'Image file is required.' }, { status: 400 });
         }
+        const tags = JSON.parse(formData.get('tags') as string);
+        const agenda = JSON.parse(formData.get('agenda') as string);
         const imageBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(imageBuffer);
         const uploadedImageUrl = await new Promise<string>((resolve, reject) => {
@@ -39,7 +41,7 @@ export async function POST(req: NextRequest) {
             stream.end(buffer);
         });
         // Ensure we store the uploaded image URL on the event payload
-        const eventData = { ...event, image: uploadedImageUrl } as Record<string, unknown>;
+        const eventData = { ...event, image: uploadedImageUrl, tags: tags, agenda: agenda } as Record<string, unknown>;
         const createdEvent = await Event.create(eventData);
         return NextResponse.json({message: 'Event created', event: createdEvent }, { status: 201 });
     } catch (e) {
