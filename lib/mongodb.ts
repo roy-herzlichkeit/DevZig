@@ -8,7 +8,7 @@ import mongoose, { type Mongoose } from 'mongoose';
 
 // Read and validate the MongoDB connection string from env.
 // Include the database name in the URI (e.g., mongodb+srv://.../mydb) or set it via connection options.
-const MONGODB_URI: string | undefined = process.env.MONGODB_URI;
+const MONGODB_URI: string = process.env.MONGODB_URI!; // non-null assertion for typing; runtime check below keeps safety
 if (!MONGODB_URI) {
   throw new Error('Missing environment variable: MONGODB_URI');
 }

@@ -1,9 +1,22 @@
 import React from 'react'
 import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
-import {events} from "@/lib/constants";
 
-const Page = () => {
+// Minimal event type used by this page
+export type IEvent = {
+    title: string;
+    image: string;
+    slug: string;
+    date: string;
+    location: string;
+    time: string;
+};
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+const Page = async () => {
+    const res = await fetch(`${BASE_URL}/api/events`);
+    const { events } = await res.json();
     return (
         <section>
             <h1 className="text-center">
@@ -18,7 +31,7 @@ const Page = () => {
                     Featured Events
                 </h3>
                 <ul className="events">
-                    {events.map((event) => (
+                    {events && events.length > 0 && events.map((event: IEvent) => (
                         <li key={event.title} style={{listStyle: 'none'}}>
                             <EventCard {...event}/>
                         </li>

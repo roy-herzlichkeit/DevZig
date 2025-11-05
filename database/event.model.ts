@@ -107,6 +107,19 @@ const EventSchema = new Schema<EventDoc, EventModel>(
 // Explicit unique index for clarity in addition to the field-level unique flag
 EventSchema.index({ slug: 1 }, { unique: true });
 
+// Pre-validate: ensure slug exists before required validation runs
+EventSchema.pre('validate', function preValidate(next) {
+  try {
+    const doc = this as EventDoc;
+    if ((!doc.slug || String(doc.slug).trim().length === 0) && (doc as any).title) {
+      doc.slug = slugify(String((doc as any).title));
+    }
+    next();
+  } catch (err) {
+    next(err as Error);
+  }
+});
+
 // Pre-save: generate slug (only if title changed), normalize date/time, and enforce non-empty strings
 EventSchema.pre('save', function preSave(next) {
   try {
