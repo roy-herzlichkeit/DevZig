@@ -36,12 +36,63 @@ const EventTags = ({tags}: {tags: string[]}) => (
 
 
 const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}> }) => {
-    const { slug } = await params;
-    const req = await fetch(`${BASE_URL}/api/events/${slug}`);
-    const { event: { description, image, agenda, overview, date, time, location, mode, audience, tags, organizer } } = await req.json();
-    if (!time) {
+    // Safely resolve params and extract slug
+    let slug: string;
+    try {
+        const p = await params;
+        slug = p?.slug;
+        if (!slug) return notFound();
+    } catch {
         return notFound();
     }
+
+    // Fetch event details with guards
+    let description = '';
+    let image = '';
+    let agenda: string[] = [];
+    let overview = '';
+    let date = '';
+    let time = '';
+    let location = '';
+    let mode = '';
+    let audience = '';
+    let tags: string[] = [];
+    let organizer = '';
+
+    try {
+        const req = await fetch(`${BASE_URL}/api/events/${slug}`, { cache: 'no-store' });
+        if (!req.ok) {
+            if (req.status === 404) return notFound();
+            throw new Error(`Failed to fetch event (${req.status})`);
+        }
+        const body = await req.json().catch(() => null);
+        if (!body || typeof body !== 'object' || !('event' in body) || typeof (body as any).event !== 'object') {
+            throw new Error('Invalid response shape');
+        }
+        const ev: any = (body as any).event;
+        // Validate required string fields
+        const requiredFields = ['description','image','overview','date','time','location','mode','audience','organizer'] as const;
+        for (const key of requiredFields) {
+            if (typeof ev[key] !== 'string' || !ev[key]) {
+                return notFound();
+            }
+        }
+        description = ev.description;
+        image = ev.image;
+        overview = ev.overview;
+        date = ev.date;
+        time = ev.time;
+        location = ev.location;
+        mode = ev.mode;
+        audience = ev.audience;
+        organizer = ev.organizer;
+        agenda = Array.isArray(ev.agenda) ? ev.agenda : [];
+        tags = Array.isArray(ev.tags) ? ev.tags : [];
+    } catch (e) {
+        // Let Next.js error boundary handle unexpected errors without crashing the whole app
+        return notFound();
+    }
+
     const bookings = 10;
 
     const similarEvents = await getSimiliarEventsBySlug(slug);
@@ -66,7 +117,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                         <EventDetailItem icon={"/icons/mode.svg"} alt={"mode"} label={mode}/>
                         <EventDetailItem icon={"/icons/audience.svg"} alt={"audience"} label={audience}/>
                     </section>
-                    <EventAgenda agendaItems={agenda}/>
+                    <EventAgenda agendaItems={Array.isArray(agenda) ? agenda : []}/>
                     <section className="flex-col-gap-2">
                         <h2>
                             About the Organiser
@@ -75,7 +126,9 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                             {organizer}
                         </p>
                     </section>
-                    <EventTags tags={tags}/>
+                    {Array.isArray(tags) && tags.length > 0 && (
+                        <EventTags tags={tags} />
+                    )}
                 </div>
                 <aside className="booking">
                     <div className="signup-card">

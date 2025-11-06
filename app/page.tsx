@@ -18,8 +18,28 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const Page = async () => {
     'use cache';
     cacheLife('hours');
-    const res = await fetch(`${BASE_URL}/api/events`);
-    const { events } = await res.json();
+
+    // Safely fetch events with error handling while preserving caching directives above
+    let events: IEvent[] = [];
+    try {
+        if (!BASE_URL) {
+            throw new Error('Missing NEXT_PUBLIC_BASE_URL');
+        }
+        const res = await fetch(`${BASE_URL}/api/events`);
+        if (!res.ok) {
+            console.error('GET /api/events failed', { status: res.status, statusText: res.statusText });
+        } else {
+            const data = await res.json().catch(() => null as any);
+            if (data && Array.isArray((data as any).events)) {
+                events = (data as any).events as IEvent[];
+            } else {
+                console.error('GET /api/events: unexpected JSON shape');
+            }
+        }
+    } catch (err) {
+        console.error('GET /api/events threw', err);
+    }
+
     return (
         <section>
             <h1 className="text-center">
