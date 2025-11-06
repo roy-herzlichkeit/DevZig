@@ -78,11 +78,12 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                 return notFound();
             }
         }
-        // Validate and convert _id
-        if (ev._id === undefined || ev._id === null || (typeof ev._id !== 'string' && typeof ev._id !== 'number' && typeof ev._id !== 'object')) {
+        // Validate and assign _id to prevent invalid bookings
+        const rawId = typeof ev._id === 'string' ? ev._id.trim() : '';
+        if (!rawId) {
             return notFound();
         }
-        id = String(ev._id);
+        id = rawId;
         description = ev.description;
         image = ev.image;
         overview = ev.overview;
