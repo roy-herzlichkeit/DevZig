@@ -3,6 +3,30 @@ import connectToDatabase from "@/lib/mongodb";
 import Event from "@/database/event.model";
 import {v2 as cloudinary} from "cloudinary";
 
+// Helper: robustly parse array fields that may arrive as JSON string, CSV, or newline-separated text
+function parseArrayField(value: FormDataEntryValue | null): string[] {
+    if (value == null) return [];
+    if (typeof value !== 'string') return [];
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    // Try strict JSON first
+    try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+            return parsed;
+        }
+        // If it's a single string, return as single-element array
+        if (typeof parsed === 'string') {
+            return parsed ? [parsed] : [];
+        }
+    } catch (_) {
+        // fall through to loose parsing
+    }
+    // Loose parsing: split by newlines or commas
+    const parts = trimmed.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+    return parts;
+}
+
 export async function POST(req: NextRequest) {
     try {
         await connectToDatabase();
@@ -18,8 +42,8 @@ export async function POST(req: NextRequest) {
         if (!file) {
             return NextResponse.json({ message: 'Image file is required.' }, { status: 400 });
         }
-        const tags = JSON.parse(formData.get('tags') as string);
-        const agenda = JSON.parse(formData.get('agenda') as string);
+        const tags = parseArrayField(formData.get('tags'));
+        const agenda = parseArrayField(formData.get('agenda'));
         const imageBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(imageBuffer);
         const uploadedImageUrl = await new Promise<string>((resolve, reject) => {
