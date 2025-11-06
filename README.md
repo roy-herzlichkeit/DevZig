@@ -1,6 +1,7 @@
 # DevZig 🚀
 
 **The ultimate platform for developers to Connect and Grow.**
+~ A good tagline for a dummy project ig
 
 DevZig is a modern, full-stack event management platform built with Next.js 16, designed specifically for the developer community. It enables developers to discover, explore, and book technical events including hackathons, seminars, and conferences—all in one place.
 
@@ -43,7 +44,7 @@ DevZig is a comprehensive event discovery and booking platform that leverages th
 - **React 19.2.0** - UI library with latest features
 - **TypeScript 5** - Type-safe development
 - **Tailwind CSS v4** - Utility-first CSS framework with native oxide engine
-- **OGL (WebGL)** - Custom light ray effects and visual enhancements
+- **ReactBits** - Custom light ray effects and visual enhancements
 
 ### **Backend**
 - **Next.js API Routes** - Serverless API endpoints
@@ -51,7 +52,7 @@ DevZig is a comprehensive event discovery and booking platform that leverages th
 - **Mongoose 8.19.3** - ODM for MongoDB with schema validation
 
 ### **Infrastructure & Services**
-- **Cloudinary** - Cloud-based image storage and optimization
+- **Cloudinary** - Cloud-based image storage and optimisation
 - **PostHog** - Product analytics and feature flags
 - **Vercel** - Deployment and hosting platform
 
