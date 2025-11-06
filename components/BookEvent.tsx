@@ -22,7 +22,7 @@ const BookEvent = ({eventId, slug}: {eventId: string; slug: string}) => {
             ) : (
                 <form onSubmit={handleSubmit}>
                     <label htmlFor="email">Email Address</label>
-                    <input type="email" placeholder={"Enter your email address"} id="email" value={email} onChange={(e) => setEmail(e.target.value)} className={'p-2 px-3 rounded-md border border-gray-300'}/>
+                    <input type="email" placeholder={"Enter your email address"} id="email" value={email} onChange={(e) => setEmail(e.target.value)} className={'p-2 px-3 rounded-md border border-gray-300'} required />
                     <button type={"submit"} className={"button-submit"}>
                         Submit
                     </button>
