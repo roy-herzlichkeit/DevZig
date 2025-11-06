@@ -47,6 +47,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
     }
 
     // Fetch event details with guards
+    let id = '';
     let description = '';
     let image = '';
     let agenda: string[] = [];
@@ -77,6 +78,12 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                 return notFound();
             }
         }
+        // Validate and assign _id to prevent invalid bookings
+        const rawId = typeof ev._id === 'string' ? ev._id.trim() : '';
+        if (!rawId) {
+            return notFound();
+        }
+        id = rawId;
         description = ev.description;
         image = ev.image;
         overview = ev.overview;
@@ -142,7 +149,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                                 Be the first to book your spot.
                             </p>
                         )}
-                        <BookEvent/>
+                        <BookEvent eventId={id} slug={slug}/>
                     </div>
                 </aside>
             </div>
