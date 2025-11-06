@@ -47,6 +47,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
     }
 
     // Fetch event details with guards
+    let id = '';
     let description = '';
     let image = '';
     let agenda: string[] = [];
@@ -77,6 +78,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                 return notFound();
             }
         }
+        id = ev._id;
         description = ev.description;
         image = ev.image;
         overview = ev.overview;
@@ -142,7 +144,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                                 Be the first to book your spot.
                             </p>
                         )}
-                        <BookEvent/>
+                        <BookEvent eventId={id} slug={slug}/>
                     </div>
                 </aside>
             </div>
