@@ -9,7 +9,7 @@ export const createBooking = async ({eventId, slug, email}: {eventId: string, sl
         const createdBooking = await Booking.create({eventId, slug, email});
         return {success: true, booking: createdBooking};
     } catch (e) {
-        console.error('booking failed', e);
+        console.error(`Failed to create booking for eventId: ${eventId}, slug: ${slug}, email: ${email}`, e);
         return {success: false, error: e instanceof Error ? e.message : 'Failed to create booking'};
     }
 }
