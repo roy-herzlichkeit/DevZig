@@ -78,7 +78,11 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
                 return notFound();
             }
         }
-        id = ev._id;
+        // Validate and convert _id
+        if (ev._id === undefined || ev._id === null || (typeof ev._id !== 'string' && typeof ev._id !== 'number' && typeof ev._id !== 'object')) {
+            return notFound();
+        }
+        id = String(ev._id);
         description = ev.description;
         image = ev.image;
         overview = ev.overview;
