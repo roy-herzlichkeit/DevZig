@@ -103,7 +103,7 @@ const EventDetailsPage = async ({ params } : { params : Promise<{slug : string}>
         return notFound();
     }
 
-    const bookings = 10;
+    const bookings = 111 - slug[0].charCodeAt(0) % 100;
 
     const similarEvents = await getSimiliarEventsBySlug(slug);
     return (
