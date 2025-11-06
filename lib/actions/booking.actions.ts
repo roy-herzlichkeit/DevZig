@@ -6,7 +6,7 @@ import {Booking} from "@/database/booking.model";
 export const createBooking = async ({eventId, slug, email}: {eventId: string, slug: string, email: string}) => {
     try {
         await connectToDatabase();
-        const createdBooking = await Booking.create({eventId, slug, email});
+        const createdBooking = await Booking.create({eventId, email});
         return {success: true, booking: createdBooking};
     } catch (e) {
         console.error(`Failed to create booking for eventId: ${eventId}, slug: ${slug}, email: ${email}`, e);
